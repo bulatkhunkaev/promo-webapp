@@ -10,7 +10,7 @@ function App() {
         <Link to="/">Главная</Link> | <Link to="/promo">Промо</Link>
       </nav>
       <Routes>
-        <Route path="/" element={<MainPage />} />
+        <Route path="/" element={<MainPage />} />     {/* Главная по умолчанию */}
         <Route path="/promo" element={<PromoPage />} />
       </Routes>
     </Router>
