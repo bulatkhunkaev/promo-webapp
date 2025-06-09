@@ -1,16 +1,20 @@
 import React from 'react';
-import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import MainPage from './pages/MainPage';
 import PromoPage from './pages/PromoPage';
 
-export default function App() {
+function App() {
   return (
     <Router>
+      <nav style={{ padding: 10 }}>
+        <Link to="/">Главная</Link> | <Link to="/promo">Промо</Link>
+      </nav>
       <Routes>
-        <Route path="/" element={<Navigate to="/main" />} />  {/* перенаправляем на /main */}
-        <Route path="/main" element={<MainPage />} />
+        <Route path="/" element={<MainPage />} />     {/* Главная по умолчанию */}
         <Route path="/promo" element={<PromoPage />} />
       </Routes>
     </Router>
   );
 }
+
+export default App;
