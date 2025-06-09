@@ -6,16 +6,21 @@ export default function MainPage() {
   const [brands, setBrands] = useState([]);
 
   useEffect(() => {
+    console.log('⚡ MainPage загрузился');
+
     fetch(`${API}/brands`)
       .then(res => res.json())
-      .then(data => setBrands(data))
-      .catch(err => console.error('Ошибка загрузки брендов:', err));
+      .then(data => {
+        console.log('✅ Получены бренды:', data);
+        setBrands(data);
+      })
+      .catch(err => console.error('❌ Ошибка загрузки брендов:', err));
   }, []);
 
   const handleGetPromo = (brandId, channel) => {
     window.open(channel, '_blank');
     alert(`Проверка подписки на канал для бренда ID: ${brandId}`);
-    // Позже здесь будет проверка подписки и получение промокода
+    // Здесь будет логика проверки подписки
   };
 
   return (

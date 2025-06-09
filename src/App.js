@@ -1,4 +1,3 @@
-// src/App.js
 import React from 'react';
 import { HashRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import MainPage from './pages/MainPage';
@@ -12,7 +11,6 @@ function App() {
       </nav>
       <Routes>
         <Route path="/" element={<MainPage />} />
-        <Route path="/main" element={<MainPage />} />
         <Route path="/promo" element={<PromoPage />} />
       </Routes>
     </Router>
