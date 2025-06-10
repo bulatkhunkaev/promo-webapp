@@ -7,9 +7,6 @@ export default function MainPage() {
   const [userId, setUserId] = useState(null);
 
   useEffect(() => {
-    console.log('⚡ MainPage загрузился');
-
-    // Получаем user_id из Telegram WebApp
     const tg = window.Telegram?.WebApp;
     if (tg?.initDataUnsafe?.user?.id) {
       setUserId(tg.initDataUnsafe.user.id);
@@ -18,7 +15,6 @@ export default function MainPage() {
       console.warn('❌ user_id не найден в Telegram WebApp');
     }
 
-    // Загружаем бренды
     fetch(`${API}/brands`)
       .then(res => res.json())
       .then(data => {
@@ -43,14 +39,19 @@ export default function MainPage() {
       const res = await fetch(`${API}/check_subscription`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ user_id: userId, brand_id: brandId })
+        body: JSON.stringify({ user_id: userId, brand_id: brandId }),
       });
 
       const data = await res.json();
-      if (res.ok) {
+      if (res.ok && data.code) {
         alert(`🎉 Ваш промокод: ${data.code}`);
+
+        // Сохраняем промокод в localStorage
+        const saved = JSON.parse(localStorage.getItem('promo_codes') || '[]');
+        const updated = [...saved, { brand_id: brandId, code: data.code }];
+        localStorage.setItem('promo_codes', JSON.stringify(updated));
       } else {
         alert(`Ошибка: ${data.error || 'Не удалось получить промокод'}`);
       }
@@ -64,7 +65,7 @@ export default function MainPage() {
     <div style={{ padding: 20 }}>
       <h2>Бренды</h2>
       {brands.length === 0 && <p>Загрузка...</p>}
-      {brands.map(brand => (
+      {brands.map((brand) => (
         <div key={brand.id} style={{ border: '1px solid #ccc', padding: 10, marginBottom: 10 }}>
           <img src={brand.avatar} alt={brand.name} width="100" />
           <h3>{brand.name}</h3>
