@@ -1,36 +1,14 @@
 import React from 'react';
-import { HashRouter as Router, Routes, Route, Navigate, useLocation, Link } from 'react-router-dom';
-import MainPage from './pages/MainPage';
-import PromoPage from './pages/PromoPage';
+import ReactDOM from 'react-dom/client';
+import App from './App';
 
-function RedirectUnknownToMain() {
-  const location = useLocation();
-  if (location.pathname !== '/' && location.pathname !== '/promo') {
-    return <Navigate to="/" replace />;
-  }
-  return null;
+const tg = window.Telegram?.WebApp;
+if (tg) {
+  tg.ready(); // 🔄 Сообщаем Telegram, что WebApp готов
+  console.log('✅ Telegram WebApp инициализирован');
+} else {
+  console.warn('❌ Telegram WebApp не найден');
 }
 
-function Navigation() {
-  return (
-    <nav style={{ padding: 10, textAlign: 'center' }}>
-      <Link to="/" style={{ marginRight: 10 }}>Главная</Link>
-      <Link to="/promo">Промо</Link>
-    </nav>
-  );
-}
-
-function App() {
-  return (
-    <Router>
-      <RedirectUnknownToMain />
-      <Navigation />
-      <Routes>
-        <Route path="/" element={<MainPage />} />
-        <Route path="/promo" element={<PromoPage />} />
-      </Routes>
-    </Router>
-  );
-}
-
-export default App;
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
