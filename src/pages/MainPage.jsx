@@ -4,10 +4,21 @@ const API = 'https://promo-backend-lwis.onrender.com';
 
 export default function MainPage() {
   const [brands, setBrands] = useState([]);
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
     console.log('⚡ MainPage загрузился');
 
+    // Получаем user_id из Telegram WebApp
+    const tg = window.Telegram?.WebApp;
+    if (tg?.initDataUnsafe?.user?.id) {
+      setUserId(tg.initDataUnsafe.user.id);
+      console.log('✅ user_id получен:', tg.initDataUnsafe.user.id);
+    } else {
+      console.warn('❌ user_id не найден в Telegram WebApp');
+    }
+
+    // Загружаем бренды
     fetch(`${API}/brands`)
       .then(res => res.json())
       .then(data => {
@@ -17,10 +28,36 @@ export default function MainPage() {
       .catch(err => console.error('❌ Ошибка загрузки брендов:', err));
   }, []);
 
-  const handleGetPromo = (brandId, channel) => {
+  const handleGetPromo = async (brandId, channel) => {
+    if (!userId) {
+      alert('Ошибка: user_id не найден');
+      return;
+    }
+
     window.open(channel, '_blank');
-    alert(`Проверка подписки на канал для бренда ID: ${brandId}`);
-    // Здесь будет логика проверки подписки
+
+    const confirmed = window.confirm('Вы подписались на канал?');
+    if (!confirmed) return;
+
+    try {
+      const res = await fetch(`${API}/check_subscription`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ user_id: userId, brand_id: brandId })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        alert(`🎉 Ваш промокод: ${data.code}`);
+      } else {
+        alert(`Ошибка: ${data.error || 'Не удалось получить промокод'}`);
+      }
+    } catch (err) {
+      console.error('❌ Ошибка при проверке подписки:', err);
+      alert('Сервер недоступен');
+    }
   };
 
   return (
